@@ -9,7 +9,7 @@
 @section('content')
     <div class="container page-content" id="app-package-skeleton">
         <p class="lead">
-        <h1>{{__('Samples')}}</h1>
+        <h1>{{__('Package Sample')}}</h1>
         <div class="row">
             <div class="col">
                 <div class="input-group">
@@ -47,7 +47,7 @@
             </div>
             <div class="form-group">
                 {!!Form::label('status', __('Status'))!!}
-                {!!Form::select('status', ["ENABLED" => "ENABLED", "DISABLED" => "DISABLED"], null, ['class'=> 'form-control', 'v-model'=> 'sample.status', 'v-bind:class'
+                {!!Form::select('status', ["ACTIVE" => "ACTIVE", "INACTIVE" => "INACTIVE"], null, ['class'=> 'form-control', 'v-model'=> 'sample.status', 'v-bind:class'
                 => '{\'form-control\':true, \'is-invalid\':addError.status}'])!!}
                 <div class="invalid-feedback" v-for="statusError in addError.status" v-text="statusError"></div>
             </div>

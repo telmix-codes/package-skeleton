@@ -5,6 +5,7 @@ namespace ProcessMaker\Package\PackageSkeleton\Http\Controllers;
 use ProcessMaker\Http\Controllers\Controller;
 use ProcessMaker\Http\Resources\ApiCollection;
 use ProcessMaker\Package\PackageSkeleton\Models\Sample;
+use ProcessMaker\Package\PackageSkeleton\Models\PackageSkeleton;
 use RBAC;
 use Illuminate\Http\Request;
 use URL;
@@ -18,7 +19,7 @@ class PackageSkeletonController extends Controller
 
     public function fetch(Request $request)
     {
-        $query = Sample::query();
+        $query = PackageSkeleton::query();
 
         $filter = $request->input('filter', '');
         if (!empty($filter)) {
@@ -42,7 +43,7 @@ class PackageSkeletonController extends Controller
 
     public function store(Request $request)
     {
-        $sample = new Sample();
+        $sample = new PackageSkeleton();
         $sample->fill($request->json()->all());
         $sample->saveOrFail();
         return $sample;
@@ -50,7 +51,7 @@ class PackageSkeletonController extends Controller
 
     public function update(Request $request, $id)
     {
-        Sample::where('id', $id)->update([
+        PackageSkeleton::where('id', $id)->update([
             'name' => $request->get("name"),
             'status' => $request->get("status")
         ]);
@@ -59,7 +60,7 @@ class PackageSkeletonController extends Controller
 
     public function destroy($id)
     {
-        Sample::find($id)->delete();
+        PackageSkeleton::find($id)->delete();
         return response([], 204);
     }
 
