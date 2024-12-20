@@ -52,7 +52,10 @@ class PackageSkeletonController extends Controller
     public function update(Request $request, $id)
     {
         PackageSkeleton::where('id', $id)->update([
+            'uuid' => $request->get("uuid"),
             'name' => $request->get("name"),
+            'description' => $request->get("description"),
+            'code' => $request->get("code"),
             'status' => $request->get("status")
         ]);
         return response([], 204);

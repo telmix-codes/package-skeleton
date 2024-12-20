@@ -21,6 +21,7 @@ mix
              * "@processmaker/vue-form-elements": "VueFormElements"
              *
              */
+      SharedComponents: "SharedComponents",
       vue: 'Vue',
     },
   })

@@ -16,34 +16,19 @@
         slot-scope="props"
       >
         <div class="actions">
-          <div class="popout">
-            <b-btn
-              v-b-tooltip.hover
-              variant="action"
-              data-action="Edit"
-              data-toggle="modal"
-              data-target="#sampleModal"
-              title="Edit"
-              @click="onAction('edit-item', props.rowData, props.rowIndex)"
-            >
-              <i class="fas fa-edit" />
-            </b-btn>
-            <b-btn
-              v-b-tooltip.hover
-              variant="action"
-              title="Remove"
-              @click="onAction('remove-item', props.rowData, props.rowIndex)"
-            >
-              <i class="fas fa-trash-alt" />
-            </b-btn>
-          </div>
+          <ellipsis-menu
+            :actions="actions"
+            :data="props.rowData"
+            :divider="true"
+            @navigate="onNavigate"
+          />
         </div>
       </template>
     </vuetable>
     <pagination
       ref="pagination"
-      single="Sample"
-      plural="Samples"
+      single="Record"
+      plural="Records"
       :per-page-select-enabled="true"
       @changePerPage="changePerPage"
       @vuetable-pagination:change-page="onPageChange"
@@ -60,25 +45,46 @@ export default {
 
   data() {
     return {
-      orderBy: 'name',
+      orderBy: 'id',
       // Our listing of samples
       sortOrder: [
         {
-          field: 'name',
-          sortField: 'name',
+          field: 'id',
+          sortField: 'id',
           direction: 'asc',
         },
       ],
       fields: [
+      {
+          title: 'ID',
+          name: 'id',
+          sortField: 'id',
+        },
+        {
+          title: 'UUID',
+          name: 'uuid',
+          sortField: 'uuid',
+        },
         {
           title: 'Name',
           name: 'name',
           sortField: 'name',
         },
         {
+          title: 'Description',
+          name: 'description',
+          sortField: 'description',
+        },
+        {
+          title: 'Code',
+          name: 'code',
+          sortField: 'code',
+        },
+        {
           title: 'Status',
           name: 'status',
           sortField: 'status',
+          callback:(val) => this.formatStatus(val),
         },
         {
           title: 'Created at',
@@ -88,6 +94,18 @@ export default {
         {
           name: '__slot:actions',
           title: '',
+        },
+      ],
+      actions: [
+        {
+          value: "edit-item",
+          content: "Edit",
+          icon: "fas fa-pen-square",
+        },
+        {
+          value: "delete-item",
+          content: "Delete",
+          icon: "fas fa-trash-alt",
         },
       ],
     };
@@ -105,32 +123,10 @@ export default {
         .charAt(0)
         .toUpperCase()}${stat.slice(1)}`;
     },
-    onAction(action, data) {
-      switch (action) {
-        case 'edit-item':
-          this.$parent.edit(data);
-          break;
-        case 'remove-item':
-          ProcessMaker.confirmModal(
-            'Caution!',
-            `Are you sure to inactive the sample '${data.name}'?`,
-            '',
-            () => {
-              ProcessMaker.apiClient.delete(`admin/package-skeleton/${data.id}`).then(() => {
-                ProcessMaker.alert(`Sample ${data.name} has been deleted`, 'warning');
-                this.$emit('reload');
-              });
-            },
-          );
-          break;
-        default:
-          break;
-      }
-    },
     fetch() {
       this.loading = true;
       // change method sort by sample
-      this.orderBy = this.orderBy === 'name' ? 'name' : this.orderBy;
+      this.orderBy = this.orderBy === 'id' ? 'id' : this.orderBy;
       // Load from our api client
       ProcessMaker.apiClient
         .get(
@@ -140,6 +136,28 @@ export default {
           this.data = this.transform(response.data);
           this.loading = false;
         });
+    },
+    onNavigate(action, data) {
+      switch (action.value) {
+        case 'edit-item':
+          this.$parent.editRecord(data);
+          break;
+        case 'delete-item':
+          ProcessMaker.confirmModal(
+            'Caution!',
+            `Are you sure to inactive the sample '${data.name}'?`,
+            '',
+            () => {
+              ProcessMaker.apiClient.delete(`admin/package-skeleton/${data.id}`).then(() => {
+                ProcessMaker.alert(`Record ${data.name} has been deleted`, 'warning');
+                this.$emit('reload');
+              });
+            },
+          );
+          break;
+        default:
+          break;
+      }
     },
   },
 };
